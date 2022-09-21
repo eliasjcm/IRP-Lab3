@@ -1,6 +1,11 @@
-import os
+# Detector de bordes utilizando derivación
+# Elaborado por:
+#   - Elías Josué Castro Montero - 2020098930
+#   - Abiel Porras Garro - 2020209597
+
 import cv2
 import numpy as np
+import os
 
 
 def edge_detection(img_name):
@@ -32,11 +37,19 @@ def edge_detection(img_name):
     # Estos valores deben limitarse a 255 para que no se desborde
     image_borders = np.minimum(borders_x + borders_y, 255)
 
-    cv2.imwrite("bordesX.jpg", borders_x)
-    cv2.imwrite("bordesY.jpg", borders_y)
-    cv2.imwrite("bordes.jpg", image_borders)
+    cv2.imwrite(f"../bordes-derivative/bordesX-{img_name}", borders_x)
+    # print("✅ Bordes en eje X guardados en 'bordesX.jpg'")
+    cv2.imwrite(f"../bordes-derivative/bordesY-{img_name}", borders_y)
+    # print("✅ Bordes en eje Y guardados en 'bordesY.jpg'")
+    cv2.imwrite(f"../bordes-derivative/bordes-{img_name}", image_borders)
+    # print("✅ Bordes superpuestos (eje X y Y) guardados en 'bordes.jpg'")
 
 
 if __name__ == "__main__":
-    image_name = input("Ingrese el nombre de la imagen: ")
-    edge_detection(image_name)
+    os.chdir("./discord-imagenes")
+    # creamos el directorio para guardar las imágenes de bordes si no existe
+    if not os.path.exists("../bordes-derivative"):
+        os.mkdir("../bordes-derivative")
+    for img in os.listdir():
+        edge_detection(img)
+    print("✅ Bordes correctamente generados")
