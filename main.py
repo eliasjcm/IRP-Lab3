@@ -1,42 +1,59 @@
-import os
 import cv2
 import numpy as np
+import os
+import matplotlib.pyplot as plt
+from skimage import io
+from google.colab.patches import cv2_imshow
 
+img = io.imread("https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png?20111103160805")
+img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-def edge_detection(img_name):
-    img = cv2.imread(img_name)
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+plt.imshow(img_gray)
 
-    height, width = img_gray.shape[:2]
-    # Arrays de zeros del mismo tamaño que la imagen
-    # borders_x almacena los valores utilizando la derivada en x
-    # borders_y almacena los valores utilizando la derivada en y
-    borders_x = np.zeros((height, width), np.uint8)
-    borders_y = np.zeros((height, width), np.uint8)
+def tiene_mapeo(a: complex, b: complex, c: complex, d: complex):
+  print(f"{b}*{c}-{a}*{d}={b*c-a*d}")
+  return b*c-a*d != complex(0,0)
+  
+def crear_mapeo(a, b, c, d):
+  return lambda z : (a*z + b) / (c*z + d)
 
-    # Aplicamos la derivada en x
-    for x in range(width - 1):
-        for y in range(height - 1):
-            # Nos interesa la diferencia entre el pixel actual y el siguiente (derecha)
-            derivative_x = abs(int(img_gray[y, x]) - int(img_gray[y, x+1]))
-            borders_x[y, x] = derivative_x
+def crear_mapeo_inverso(a, b, c, d):
+  return lambda z : (a*z + b) / (c*z + d)
 
-    # Aplicamos la derivada en y
-    for x in range(width - 1):
-        for y in range(height - 1):
-            # Nos interesa la diferencia entre el pixel actual y el siguiente (abajo)
-            derivative_y = abs(int(img_gray[y, x]) - int(img_gray[y+1, x]))
-            borders_y[y, x] = derivative_y
+def mapear_imagen(img, a, b, c, d):
+  mapeo = crear_mapeo(a, b, c, d)
+  mapeo_inverso = crear_mapeo_inverso(a, b, c, d)
+  width, height = img.shape
+  print(img.shape)
+  new_img = np.zeros((width, height), np.uint8)
+  for x in range(width):
+    for y in range(height):
+      w = mapeo(complex(x, y))
+      # if ()
+      new_x = int(w.real)
+      new_y = int(w.imag)
+      # print(new_x, new_y)
+      if 0 <= new_x < width and 0 <= new_y < height:
+        new_img[new_x][new_y] = img[x,y]
 
-    # Sumamos los valores de las derivadas en x e y
-    # Estos valores deben limitarse a 255 para que no se desborde
-    image_borders = np.minimum(borders_x + borders_y, 255)
+    bordesX[fila_actual] = min, max min<pixel<max
+  for x in range(width):
+    
+    for y in range(height):
+      w = mapeo(complex(x, y))
+      # if ()
+      new_x = int(w.real)
+      new_y = int(w.imag)
+      # print(new_x, new_y)
+      if 0 <= new_x < width and 0 <= new_y < height:
+        new_img[new_x][new_y] = img[x,y]
 
-    cv2.imwrite("bordesX.jpg", borders_x)
-    cv2.imwrite("bordesY.jpg", borders_y)
-    cv2.imwrite("bordes.jpg", image_borders)
+    
+        # new_img[new_x][new_y] = 255
+  return new_img
 
+mapeada = mapear_imagen(img_gray, 2.1+2.1j, 0, 0.003, 1+1j)
+# mapeada = mapear_imagen(img_gray, 0+.75j, 0, 0, 1)
+plt.imshow(mapeada)
 
-if __name__ == "__main__":
-    image_name = input("Ingrese el nombre de la imagen: ")
-    edge_detection(image_name)
+cv2_imshow(mapeada)
