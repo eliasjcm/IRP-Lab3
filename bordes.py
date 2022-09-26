@@ -119,6 +119,10 @@ def addGaussianBlur(img, range):
   img = cv2.GaussianBlur(img, (range, range), 0)
   return img
 
+def newImageAB(img, a, b):
+  new_img = newImage(img, a, b, 0, 1)
+  return new_img
+
 new_img = newImageInterpolation4(img_gray, 3, 0, 0, 1)
 
 plt.imshow(new_img)
