@@ -79,14 +79,12 @@ def newImage(img, a, b, c, d):
   new_width, new_height = new_size(img, a, b, c, d)
   mapeo = crear_mapeo_inverso(a, b, c, d)
   new_img = np.zeros((new_width, new_height), np.uint8)
-  # new_img = np.zeros((bordes[0][0], bordes[0][1]), np.uint8)
 
   for x in range(new_width):
     for y in range(new_height):
       z = mapeo(complex(x, y))
       new_x = int(z.real)
       new_y = int(z.imag)
-      # print("Forma2", x, y, new_x, new_y)
       if 0 <= new_x < img.shape[0] and 0 <= new_y < img.shape[1]:
         new_img[x, y] = img[new_x, new_y]   
   return new_img
@@ -95,14 +93,12 @@ def newImageInterAux(img, a, b, c, d, inter8):
   new_width, new_height = new_size(img, a, b, c, d)
   mapeo = crear_mapeo_inverso(a, b, c, d)
   new_img = np.zeros((new_width, new_height), np.uint8)
-  # new_img = np.zeros((bordes[0][0], bordes[0][1]), np.uint8)
 
   for x in range(new_width):
     for y in range(new_height):
       z = mapeo(complex(x, y))
       new_x = int(z.real)
       new_y = int(z.imag)
-      # print("Forma2", x, y, new_x, new_y)
       if not (new_x == 0 or new_x == (img.shape[0]-1) or new_y == 0 or new_y == (img.shape[0]-1)):
         if 0 <= new_x < img.shape[0] and 0 <= new_y < img.shape[1]:
           if inter8:
@@ -123,11 +119,9 @@ def addGaussianBlur(img, range):
   img = cv2.GaussianBlur(img, (range, range), 0)
   return img
 
-new_img = newImage(img_gray, 6, 0, 0, 1)
+new_img = newImageInterpolation4(img_gray, 3, 0, 0, 1)
 
 plt.imshow(new_img)
 plt.show()
 
 cv2.imwrite("Test.png", new_img)
-
-# cv2_imshow(mapeada)
