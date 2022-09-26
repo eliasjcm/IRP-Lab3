@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # from skimage import io
 # from google.colab.patches import cv2_imshow
 
-img = cv2.imread('lenna.png')
+img = cv2.imread('example.png')
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 def tiene_mapeo(a: complex, b: complex, c: complex, d: complex):
@@ -52,9 +52,8 @@ def interpolacion8(img, x, y):
   count = count / 8
   return count
 
-def new_size(img, a, b, c, d):
+def new_size(width, height, a, b, c, d):
   mapeo = crear_mapeo(a, b, c, d)
-  width, height = img.shape
   new_width, new_height = 0, 0
 
   for x in [0, 1, width-2, width-1]:
@@ -76,7 +75,7 @@ def new_size(img, a, b, c, d):
   return new_width, new_height
 
 def newImage(img, a, b, c, d):
-  new_width, new_height = new_size(img, a, b, c, d)
+  new_width, new_height = new_size(img.shape[0], img.shape[1], a, b, c, d)
   mapeo = crear_mapeo_inverso(a, b, c, d)
   new_img = np.zeros((new_width, new_height), np.uint8)
 
@@ -90,7 +89,7 @@ def newImage(img, a, b, c, d):
   return new_img
 
 def newImageInterAux(img, a, b, c, d, inter8):
-  new_width, new_height = new_size(img, a, b, c, d)
+  new_width, new_height = new_size(img.shape[0], img.shape[1], a, b, c, d)
   mapeo = crear_mapeo_inverso(a, b, c, d)
   new_img = np.zeros((new_width, new_height), np.uint8)
 
@@ -123,9 +122,15 @@ def newImageAB(img, a, b):
   new_img = newImage(img, a, b, 0, 1)
   return new_img
 
-new_img = newImageInterpolation4(img_gray, 3, 0, 0, 1)
+# new_img = newImage(img_gray,  2+2.1j, 0, 0.004, 4+6j) 1.3
+# new_img = newImageAB(img_gray,  3, 0) 1.4.1
+# new_img = newImageAB(img_gray,  3+1j, 0) 1.4.2
+# new_img = newImageAB(img_gray,  1, 600+450j) 1.4.3
+# new_img = newImageAB(img_gray,  3+1j, 400+300j) 1.4.4
+
+new_img = newImage(img_gray, 3+2.1j, 0, 0.004, 4+6j)
 
 plt.imshow(new_img)
 plt.show()
 
-cv2.imwrite("Test.png", new_img)
+cv2.imwrite("1.3.png", new_img)
