@@ -24,9 +24,9 @@ img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 #             new_img[x, y] = 255
 #   return new_img
 
-def tiene_mapeo(a: complex, b: complex, c: complex, d: complex):
+def tiene_mapeo_inverso(a, b, c, d):
   print(f"{b}*{c}-{a}*{d}={b*c-a*d}")
-  return b*c-a*d != complex(0,0)
+  return b*c-a*d != 0
   
 def crear_mapeo(a, b, c, d):
   return lambda z : (a*z + b) / (c*z + d)
