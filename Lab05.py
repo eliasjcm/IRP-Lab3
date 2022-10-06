@@ -45,12 +45,12 @@ def getPixelsInterpolation(img):
 def highlightEdges(img, img_name, ksize):
     # laplaceMask = cv2.Laplacian(img, cv2.CV_64F, ksize=ksize)
     laplaceMask = cv2.Laplacian(img, cv2.CV_16S, ksize=ksize)
-    abs_dst = cv2.convertScaleAbs(laplaceMask)
+    # abs_dst = cv2.convertScaleAbs(laplaceMask)
     # laplaceMask = np.uint8(np.absolute(laplaceMask))
 
-    plt.imshow(abs_dst, cmap='gray')
+    plt.imshow(laplaceMask, cmap='gray')
     plt.show()
-    cv2.imwrite(img_name, abs_dst)
+    cv2.imwrite(img_name, laplaceMask)
 
     height, width = img.shape[:2]
 
@@ -70,6 +70,8 @@ def main():
     # plt.imshow(img, cmap='gray')
     # plt.show()
     img = getPixelsInterpolation(img)
+
+    img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
     # plt.imshow(img, cmap='gray')
     # plt.show()
     highlightEdges(img, 'exampleLaplace.png', 3)
