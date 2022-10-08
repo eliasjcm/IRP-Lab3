@@ -38,65 +38,52 @@ def create_chess_pattern(img, color: list) -> np.ndarray:
 def getPixelsInterpolation(img):
     new_img = img.copy()
     height, width = img.shape[:2]
-    picked_color = img[0][0]
     for x in range(height):
         for y in range(width):
             if (x + y) % 2 and not (x == 0 or x == (height-1) or y == 0 or y == (width-1)):
                 neighbours = np.sum(
                     [img[x, y-1], img[x, y+1], img[x-1, y], img[x+1, y]], axis=0) / 4
-                # print neighbours values
-
-                # print(img[x, y-1], img[x, y+1], img[x-1, y],
-                #       img[x+1, y], interpolation4(img,x,y), neighbours)
                 new_img[x][y] = neighbours
-                # print(np.average(neighbours))
+            else:
+                new_img[x][y] = img[x][y]
+
     np.clip(new_img, 0, 255, out=new_img)
-    # img[x, y] = interpolation4(img, x, y)
     return new_img
 
 
-def highlightEdges(img, img_name, ksize):
-    # laplaceMask = cv2.Laplacian(img, cv2.CV_64F, ksize=ksize)
-    laplaceMask = cv2.Laplacian(img, cv2.CV_16S, ksize=ksize)
-    # abs_dst = cv2.convertScaleAbs(laplaceMask)
-    # laplaceMask = np.uint8(np.absolute(laplaceMask))
-
-    plt.imshow(laplaceMask, cmap='gray')
-    plt.show()
-    cv2.imwrite(img_name, laplaceMask)
-
-    height, width = img.shape[:2]
-
-    for x in range(height):
-        for y in range(width):
-            img[x][y] = np.minimum(img[x][y] + laplaceMask[x][y], 255)
-
-    plt.imshow(img, cmap='gray')
-    plt.show()
-    cv2.imwrite("exampleTest", img)
-
-
-def main():
-    ddepth = cv2.CV_16S
-    kernel_size = 3
-    imageName = '1.jpg'
-    src = cv2.imread(cv2.samples.findFile(imageName),
+def retrieve_image_info(img_name):
+    img = cv2.imread(cv2.samples.findFile(img_name),
                      cv2.IMREAD_COLOR)  # Load an image
 
     # Check if image is loaded fine
-    if src is None:
+    if img is None:
         print('Error opening image')
         return -1
+    return getPixelsInterpolation(img)
 
-    create_chess_pattern(src, (0, 0, 0))
 
-    src = getPixelsInterpolation(src)
-    dst = cv2.Laplacian(src, ddepth, ksize=kernel_size)
+def improve_sharpness(img, c):
+    ddepth = cv2.CV_16S
+    kernel_size = 3
+    dst = cv2.Laplacian(img, ddepth, ksize=kernel_size)
     abs_dst = cv2.convertScaleAbs(dst)
-    c = .2
-    final = src + c * abs_dst
-    cv2.imwrite('exampleLaplace_antes.png', src)
-    cv2.imwrite('exampleLaplace_despues.png', final)
+    final = img + c * abs_dst
+    return final
+
+
+def main():
+
+    lab5_imagen1 = retrieve_image_info("lab1_imagen1.png")
+    lab5_imagen2 = retrieve_image_info("lab1_imagen2.png")
+
+    cv2.imwrite("lab5_imagen1.png", lab5_imagen1)
+    cv2.imwrite("lab5_imagen2.png", lab5_imagen2)
+
+    lab5_imagen3 = improve_sharpness(lab5_imagen1, -0.2)
+    lab5_imagen4 = improve_sharpness(lab5_imagen2, -0.2)
+
+    cv2.imwrite("lab5_imagen3", lab5_imagen3)
+    cv2.imwrite("lab5_imagen4.png", lab5_imagen4)
 
 
 main()

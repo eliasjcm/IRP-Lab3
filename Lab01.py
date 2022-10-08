@@ -1,28 +1,25 @@
 import cv2
 
-image = cv2.imread("lab1_imagen.jpg")
+image = cv2.imread("lab1_imagen.png")
 (height, width) = image.shape[:2]
 image2 = image.copy()
 
-for y in range(height):
-    if y % 2 == 0:
-        for x in range(width):
-            if x % 2 == 0:
-                image[y][x] = [0, 0, 0]
-    else:
-        for x in range(width):
-            if x % 2 != 0:
-                image[y][x] = [0, 0, 0]
 
-for y in range(height):
-    if y % 2 == 0:
-        for x in range(width):
-            if x % 2 == 0:
-                image2[y][x] = [255, 255, 255]
-    else:
-        for x in range(width):
-            if x % 2 != 0:
-                image2[y][x] = [255, 255, 255]
+def create_chess_pattern(img, color: list):
+    """
+    Función utilizada para crear el patrón de tablero de ajedrez coloreando la imagen con el color recibido.
+    Los pixeles se pintan de forma que no hayan dos pixeles contiguos ni vertical ni horizontalmente pintados del mismo color recibido
+    """
+    height, width = img.shape[:2]
+    for i in range(height):
+        for j in range(width):
+            # evita que dos pixeles contiguos sean pintados del mismo color
+            if (i + j) % 2:
+                img[i, j] = color
 
-cv2.imwrite("lab1_imagen2.jpg", image)
-cv2.imwrite("lab1_imagen1.jpg", image2)
+create_chess_pattern(image, [255,255,255])
+create_chess_pattern(image2, [0, 0, 0])
+
+
+cv2.imwrite("lab1_imagen1.png", image)
+cv2.imwrite("lab1_imagen2.png", image2)
